@@ -40,12 +40,16 @@ export async function POST(req: NextRequest, { params }: Params) {
   const form = await req.formData();
   const type = (form.get("type") as string | null)?.trim();
   const beskrivelse = (form.get("beskrivelse") as string | null)?.trim();
-  const innsender = (form.get("innsender") as string | null)?.trim();
+  const navn = (form.get("navn") as string | null)?.trim();
+  const epost = (form.get("epost") as string | null)?.trim();
+  const telefon = (form.get("telefon") as string | null)?.trim();
   const bilde = form.get("bilde") as File | null;
 
-  if (!type || !beskrivelse || !innsender || !bilde || bilde.size === 0) {
+  if (!type || !beskrivelse || !navn || !epost || !telefon || !bilde || bilde.size === 0) {
     return NextResponse.json({ error: "Alle felt er påkrevde" }, { status: 400 });
   }
+
+  const innsender = `${navn} | ${epost} | ${telefon}`;
 
   let bildeUrl = "";
   if (SUPABASE_URL && SERVICE_KEY) {
@@ -85,14 +89,16 @@ export async function POST(req: NextRequest, { params }: Params) {
     resend.emails
       .send({
         from: "noreply@kontorcompaniet.no",
-        to: "palmoen81@gmail.com",
+        to: "paal@kcdrammen.no",
         subject: `Ny ${label} på asset ${id}`,
         html: `
           <h2 style="font-family:sans-serif">Ny ${label} innsendt</h2>
           <table style="font-family:sans-serif;border-collapse:collapse">
             <tr><td style="padding:4px 12px 4px 0;color:#6b7280">Asset</td><td><a href="${BASE_URL}/asset/${id}">${id}</a></td></tr>
             <tr><td style="padding:4px 12px 4px 0;color:#6b7280">Type</td><td>${label}</td></tr>
-            <tr><td style="padding:4px 12px 4px 0;color:#6b7280">Innsendt av</td><td>${innsender}</td></tr>
+            <tr><td style="padding:4px 12px 4px 0;color:#6b7280">Navn</td><td>${navn}</td></tr>
+            <tr><td style="padding:4px 12px 4px 0;color:#6b7280">E-post</td><td><a href="mailto:${epost}">${epost}</a></td></tr>
+            <tr><td style="padding:4px 12px 4px 0;color:#6b7280">Telefon</td><td><a href="tel:${telefon}">${telefon}</a></td></tr>
           </table>
           <p style="font-family:sans-serif;margin-top:1rem"><strong>Beskrivelse:</strong><br>${beskrivelse.replace(/\n/g, "<br>")}</p>
           ${bildeUrl ? `<p><img src="${bildeUrl}" style="max-width:500px;border-radius:8px" /></p>` : ""}
