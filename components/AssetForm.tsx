@@ -272,105 +272,111 @@ export function AssetForm({ assetId, initial, tenantId }: Props) {
 
   return (
     <div style={s.page}>
-      <form onSubmit={lagre} style={s.form}>
+      <div style={s.topBar}>
         <h2 style={s.heading}>Registrer Asset</h2>
         <p style={s.idText}>{assetId}</p>
+      </div>
 
-        {/* Produkttype */}
-        <fieldset style={s.fieldset}>
-          <legend style={s.legend}>Produkttype</legend>
-          <select value={produkttypeId} onChange={(e) => { setProduktypeId(e.target.value); setProdusentId(""); setModellId(""); }} style={s.select}>
-            <option value="">– velg type –</option>
-            {produkttyper.map((t) => <option key={t.id} value={t.id}>{t.navn}</option>)}
-          </select>
-          <div style={s.row}>
-            <input value={nyType} onChange={(e) => setNyType(e.target.value)} placeholder="Ny type…" style={s.input} />
-            <button type="button" onClick={leggTilType} style={s.addBtn}>+ Legg til</button>
-          </div>
-        </fieldset>
-
-        {/* Produsent */}
-        <fieldset style={s.fieldset}>
-          <legend style={s.legend}>Produsent</legend>
-          <select value={produsentId} onChange={(e) => { setProdusentId(e.target.value); setModellId(""); }} style={s.select}>
-            <option value="">– velg –</option>
-            {produsenter.map((p) => <option key={p.id} value={p.id}>{p.navn}</option>)}
-          </select>
-          <div style={s.row}>
-            <input value={nyProdusent} onChange={(e) => setNyProdusent(e.target.value)} placeholder="Ny produsent…" style={s.input} />
-            <button type="button" onClick={leggTilProdusent} style={s.addBtn}>+ Legg til</button>
-          </div>
-        </fieldset>
-
-        {/* Modell */}
-        <fieldset style={s.fieldset}>
-          <legend style={s.legend}>Modell</legend>
-          <select value={modellId} onChange={(e) => setModellId(e.target.value)} style={s.select} disabled={!produsentId}>
-            <option value="">– velg –</option>
-            {modeller.map((m) => <option key={m.id} value={m.id}>{m.navn}</option>)}
-          </select>
-          <div style={s.row}>
-            <input value={nyModell} onChange={(e) => setNyModell(e.target.value)} placeholder="Ny modell…" style={s.input} disabled={!produsentId} />
-            <button type="button" onClick={leggTilModell} style={s.addBtn} disabled={!produsentId}>+ Legg til</button>
-          </div>
-        </fieldset>
-
-        <label style={s.label}>
-          Kjøpsdato
-          <input type="date" value={kjopsdato} onChange={(e) => setKjopsdato(e.target.value)} style={s.input} />
-        </label>
-
-        <div style={s.label}>
-          Garantitid
-          <select value={garantiMaaneder} onChange={(e) => setGarantiMaaneder(e.target.value)} style={s.input}>
-            <option value="">– Ikke valgt –</option>
-            <option value="60">5 år (60 mnd)</option>
-            <option value="120">10 år (120 mnd)</option>
-          </select>
-          {kjopsdato && garantiMaaneder && (() => {
-            const slutt = new Date(kjopsdato);
-            slutt.setMonth(slutt.getMonth() + Number(garantiMaaneder));
-            return <span style={{ fontSize: "0.85rem", color: "#555", marginTop: 4 }}>Garanti utløper: {slutt.toLocaleDateString("nb-NO")}</span>;
-          })()}
-        </div>
-
-        <label style={s.label}>
-          Kunde
-          <input value={kundeNavn} onChange={(e) => setKundeNavn(e.target.value)} placeholder="f.eks. Norwegian" style={s.input} />
-        </label>
-
-        <label style={s.label}>
-          Lokasjon
-          <input value={lokasjonNavn} onChange={(e) => setLokasjonNavn(e.target.value)} placeholder="f.eks. Fornebu, avd. X" style={s.input} />
-        </label>
-
-        <label style={s.label}>
-          Notat
-          <textarea value={notat} onChange={(e) => setNotat(e.target.value)} placeholder="Kommentarer, tilstand, merknader…" rows={3} style={{ ...s.input, resize: "vertical" as const }} />
-        </label>
-
-        {/* Bilder */}
-        <fieldset style={s.fieldset}>
-          <legend style={s.legend}>Bilder</legend>
-          <div style={s.bildeGrid}>
-            {bilder.map((url, i) => (
-              <div key={i} style={s.bildeWrap}>
-                <img src={url} alt={`Bilde ${i + 1}`} style={s.bildeImg} />
-                <button type="button" onClick={() => setBilder((prev) => prev.filter((_, j) => j !== i))} style={s.slettBildeBtn}>✕</button>
+      <form onSubmit={lagre}>
+        <div className="wm-asset-layout">
+          {/* Venstre kolonne */}
+          <div style={s.col}>
+            <fieldset style={s.fieldset}>
+              <legend style={s.legend}>Produkttype</legend>
+              <select value={produkttypeId} onChange={(e) => { setProduktypeId(e.target.value); setProdusentId(""); setModellId(""); }} style={s.select}>
+                <option value="">– velg type –</option>
+                {produkttyper.map((t) => <option key={t.id} value={t.id}>{t.navn}</option>)}
+              </select>
+              <div style={s.row}>
+                <input value={nyType} onChange={(e) => setNyType(e.target.value)} placeholder="Ny type…" style={s.input} />
+                <button type="button" onClick={leggTilType} style={s.addBtn}>+ Legg til</button>
               </div>
-            ))}
-          </div>
-          <div style={s.row}>
-            <label style={s.uploadLabel}>
-              {uploading ? "Laster opp…" : "📷 Produktbilde"}
-              <input type="file" accept="image/*" onChange={lastOppBilde} disabled={uploading} style={{ display: "none" }} />
+            </fieldset>
+
+            <fieldset style={s.fieldset}>
+              <legend style={s.legend}>Produsent</legend>
+              <select value={produsentId} onChange={(e) => { setProdusentId(e.target.value); setModellId(""); }} style={s.select}>
+                <option value="">– velg –</option>
+                {produsenter.map((p) => <option key={p.id} value={p.id}>{p.navn}</option>)}
+              </select>
+              <div style={s.row}>
+                <input value={nyProdusent} onChange={(e) => setNyProdusent(e.target.value)} placeholder="Ny produsent…" style={s.input} />
+                <button type="button" onClick={leggTilProdusent} style={s.addBtn}>+ Legg til</button>
+              </div>
+            </fieldset>
+
+            <fieldset style={s.fieldset}>
+              <legend style={s.legend}>Modell</legend>
+              <select value={modellId} onChange={(e) => setModellId(e.target.value)} style={s.select} disabled={!produsentId}>
+                <option value="">– velg –</option>
+                {modeller.map((m) => <option key={m.id} value={m.id}>{m.navn}</option>)}
+              </select>
+              <div style={s.row}>
+                <input value={nyModell} onChange={(e) => setNyModell(e.target.value)} placeholder="Ny modell…" style={s.input} disabled={!produsentId} />
+                <button type="button" onClick={leggTilModell} style={s.addBtn} disabled={!produsentId}>+ Legg til</button>
+              </div>
+            </fieldset>
+
+            <label style={s.label}>
+              Kunde
+              <input value={kundeNavn} onChange={(e) => setKundeNavn(e.target.value)} placeholder="f.eks. Norwegian" style={s.input} />
             </label>
-            <label style={s.uploadLabel}>
-              {uploading ? "…" : "🏷 Garantilapp"}
-              <input type="file" accept="image/*" onChange={lastOppBilde} disabled={uploading} style={{ display: "none" }} />
+
+            <label style={s.label}>
+              Lokasjon
+              <input value={lokasjonNavn} onChange={(e) => setLokasjonNavn(e.target.value)} placeholder="f.eks. Fornebu, avd. X" style={s.input} />
+            </label>
+
+            <label style={s.label}>
+              Notat
+              <textarea value={notat} onChange={(e) => setNotat(e.target.value)} placeholder="Kommentarer, tilstand, merknader…" rows={4} style={{ ...s.input, resize: "vertical" as const }} />
             </label>
           </div>
-        </fieldset>
+
+          {/* Høyre kolonne */}
+          <div style={s.col}>
+            <label style={s.label}>
+              Kjøpsdato
+              <input type="date" value={kjopsdato} onChange={(e) => setKjopsdato(e.target.value)} style={s.input} />
+            </label>
+
+            <div style={s.label}>
+              Garantitid
+              <select value={garantiMaaneder} onChange={(e) => setGarantiMaaneder(e.target.value)} style={s.input}>
+                <option value="">– Ikke valgt –</option>
+                <option value="60">5 år (60 mnd)</option>
+                <option value="120">10 år (120 mnd)</option>
+              </select>
+              {kjopsdato && garantiMaaneder && (() => {
+                const slutt = new Date(kjopsdato);
+                slutt.setMonth(slutt.getMonth() + Number(garantiMaaneder));
+                return <span style={{ fontSize: "0.85rem", color: "#555", marginTop: 4 }}>Garanti utløper: {slutt.toLocaleDateString("nb-NO")}</span>;
+              })()}
+            </div>
+
+            <fieldset style={s.fieldset}>
+              <legend style={s.legend}>Bilder</legend>
+              <div style={s.bildeGrid}>
+                {bilder.map((url, i) => (
+                  <div key={i} style={s.bildeWrap}>
+                    <img src={url} alt={`Bilde ${i + 1}`} style={s.bildeImg} />
+                    <button type="button" onClick={() => setBilder((prev) => prev.filter((_, j) => j !== i))} style={s.slettBildeBtn}>✕</button>
+                  </div>
+                ))}
+              </div>
+              <div style={s.row}>
+                <label style={s.uploadLabel}>
+                  {uploading ? "Laster opp…" : "📷 Produktbilde"}
+                  <input type="file" accept="image/*" onChange={lastOppBilde} disabled={uploading} style={{ display: "none" }} />
+                </label>
+                <label style={s.uploadLabel}>
+                  {uploading ? "…" : "🏷 Garantilapp"}
+                  <input type="file" accept="image/*" onChange={lastOppBilde} disabled={uploading} style={{ display: "none" }} />
+                </label>
+              </div>
+            </fieldset>
+          </div>
+        </div>
 
         {error && <p style={s.error}>{error}</p>}
 
@@ -413,10 +419,11 @@ export function AssetForm({ assetId, initial, tenantId }: Props) {
 }
 
 const s: Record<string, React.CSSProperties> = {
-  page: { maxWidth: 520, margin: "0 auto", padding: "1rem", fontFamily: "system-ui, sans-serif" },
-  form: { display: "flex", flexDirection: "column", gap: "1rem" },
-  heading: { margin: 0, fontSize: "1.3rem" },
-  idText: { margin: 0, fontFamily: "monospace", fontSize: "1rem", color: "#555" },
+  page: { background: "white", borderRadius: 12, boxShadow: "0 1px 6px rgba(0,0,0,0.08)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.25rem" },
+  topBar: { display: "flex", alignItems: "baseline", gap: "1rem", flexWrap: "wrap", borderBottom: "1px solid #f1f5f9", paddingBottom: "1rem" },
+  col: { display: "flex", flexDirection: "column", gap: "1rem" },
+  heading: { margin: 0, fontSize: "1.25rem", fontWeight: 700, color: "#1C2233" },
+  idText: { margin: 0, fontFamily: "monospace", fontSize: "0.95rem", color: "#6b7280" },
   fieldset: { border: "1px solid #ddd", borderRadius: 6, padding: "0.75rem", display: "flex", flexDirection: "column", gap: "0.5rem" },
   legend: { fontWeight: 600, fontSize: "0.9rem", padding: "0 4px" },
   label: { display: "flex", flexDirection: "column", gap: "0.25rem", fontSize: "0.9rem", fontWeight: 500 },

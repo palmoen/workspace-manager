@@ -30,7 +30,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <img
             src="/logo-horisontal.svg"
             alt="Kontorcompaniet"
-            style={{ height: 26, filter: "brightness(0) invert(1)" }}
+            className="wm-logo"
+            style={{ filter: "brightness(0) invert(1)" }}
           />
         </a>
 

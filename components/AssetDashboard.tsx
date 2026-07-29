@@ -34,7 +34,7 @@ const s = {
   input: { padding: "0.45rem 0.7rem", border: "1px solid #e2e8f0", borderRadius: 7, fontSize: "0.875rem", minWidth: 200, color: "#374151" } as React.CSSProperties,
   exportBtn: { padding: "0.45rem 1rem", background: "#16a34a", color: "white", border: "none", borderRadius: 7, fontSize: "0.875rem", fontWeight: 600, cursor: "pointer", textDecoration: "none", display: "inline-block" } as React.CSSProperties,
   table: { width: "100%", borderCollapse: "collapse" as const, fontSize: "0.85rem" } as React.CSSProperties,
-  th: { textAlign: "left" as const, padding: "0.65rem 0.9rem", borderBottom: "1px solid #e2e8f0", background: "#f8fafc", fontWeight: 600, color: "#374151", fontSize: "0.8rem", letterSpacing: "0.03em" } as React.CSSProperties,
+  th: { textAlign: "left" as const, padding: "0.65rem 0.9rem", borderBottom: "1px solid #e2e8f0", background: "#f8fafc", fontWeight: 600, color: "#374151", fontSize: "0.8rem", letterSpacing: "0.03em", whiteSpace: "nowrap" as const } as React.CSSProperties,
   td: { padding: "0.65rem 0.9rem", borderBottom: "1px solid #f1f5f9", verticalAlign: "middle" as const, color: "#374151" } as React.CSSProperties,
   badge: (status: string): React.CSSProperties => ({
     display: "inline-block", padding: "0.15rem 0.5rem", borderRadius: 12, fontSize: "0.78rem", fontWeight: 500,

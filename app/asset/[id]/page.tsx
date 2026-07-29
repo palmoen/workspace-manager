@@ -52,7 +52,7 @@ export default async function AssetPage({ params, searchParams }: Props) {
           ← Oversikt
         </a>
       </header>
-      <main style={{ flex: 1, padding: "1.5rem 1rem", maxWidth: 680, margin: "0 auto", width: "100%" }}>
+      <main style={{ flex: 1, padding: "1.5rem 1rem", maxWidth: 1100, margin: "0 auto", width: "100%" }}>
         <AssetForm assetId={id} initial={asset as never} tenantId={TENANT_ID} />
       </main>
     </div>
