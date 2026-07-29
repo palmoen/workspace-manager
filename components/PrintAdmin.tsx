@@ -191,11 +191,11 @@ export function PrintAdmin() {
             <div style={s.grid}>
               <div style={s.label}>
                 Produkttype
-                <select value={produkttypeId} onChange={(e) => setProduktypeId(e.target.value)} style={s.select}>
-                  <option value="">– velg type –</option>
-                  {produkttyper.map((t) => <option key={t.id} value={t.id}>{t.navn}</option>)}
-                </select>
-                <div style={s.addRow}>
+                <div style={s.inputRow}>
+                  <select value={produkttypeId} onChange={(e) => setProduktypeId(e.target.value)} style={{ ...s.select, flex: 1 }}>
+                    <option value="">– velg type –</option>
+                    {produkttyper.map((t) => <option key={t.id} value={t.id}>{t.navn}</option>)}
+                  </select>
                   <input value={nyType} onChange={(e) => setNyType(e.target.value)} placeholder="Ny type…" style={s.addInput} />
                   <button type="button" onClick={leggTilType} style={s.addBtn} disabled={!nyType.trim()}>+ Legg til</button>
                 </div>
@@ -203,15 +203,11 @@ export function PrintAdmin() {
 
               <div style={s.label}>
                 Produsent
-                <select
-                  value={produsentId}
-                  onChange={(e) => { setProdusentId(e.target.value); setModellId(""); }}
-                  style={s.select}
-                >
-                  <option value="">– velg –</option>
-                  {produsenter.map((p) => <option key={p.id} value={p.id}>{p.navn}</option>)}
-                </select>
-                <div style={s.addRow}>
+                <div style={s.inputRow}>
+                  <select value={produsentId} onChange={(e) => { setProdusentId(e.target.value); setModellId(""); }} style={{ ...s.select, flex: 1 }}>
+                    <option value="">– velg –</option>
+                    {produsenter.map((p) => <option key={p.id} value={p.id}>{p.navn}</option>)}
+                  </select>
                   <input value={nyProdusent} onChange={(e) => setNyProdusent(e.target.value)} placeholder="Ny produsent…" style={s.addInput} />
                   <button type="button" onClick={leggTilProdusent} style={s.addBtn} disabled={!nyProdusent.trim()}>+ Legg til</button>
                 </div>
@@ -219,16 +215,11 @@ export function PrintAdmin() {
 
               <div style={s.label}>
                 Modell
-                <select
-                  value={modellId}
-                  onChange={(e) => setModellId(e.target.value)}
-                  style={s.select}
-                  disabled={!produsentId}
-                >
-                  <option value="">– velg –</option>
-                  {modeller.map((m) => <option key={m.id} value={m.id}>{m.navn}</option>)}
-                </select>
-                <div style={s.addRow}>
+                <div style={s.inputRow}>
+                  <select value={modellId} onChange={(e) => setModellId(e.target.value)} style={{ ...s.select, flex: 1 }} disabled={!produsentId}>
+                    <option value="">– velg –</option>
+                    {modeller.map((m) => <option key={m.id} value={m.id}>{m.navn}</option>)}
+                  </select>
                   <input value={nyModell} onChange={(e) => setNyModell(e.target.value)} placeholder="Ny modell…" style={s.addInput} disabled={!produsentId} />
                   <button type="button" onClick={leggTilModell} style={s.addBtn} disabled={!produsentId || !nyModell.trim()}>+ Legg til</button>
                 </div>
@@ -236,11 +227,11 @@ export function PrintAdmin() {
 
               <div style={s.label}>
                 Kunde
-                <select value={kundeId} onChange={(e) => setKundeId(e.target.value)} style={s.select}>
-                  <option value="">– velg –</option>
-                  {kunder.map((k) => <option key={k.id} value={k.id}>{k.navn}</option>)}
-                </select>
-                <div style={s.addRow}>
+                <div style={s.inputRow}>
+                  <select value={kundeId} onChange={(e) => setKundeId(e.target.value)} style={{ ...s.select, flex: 1 }}>
+                    <option value="">– velg –</option>
+                    {kunder.map((k) => <option key={k.id} value={k.id}>{k.navn}</option>)}
+                  </select>
                   <input value={nyKunde} onChange={(e) => setNyKunde(e.target.value)} placeholder="Ny kunde…" style={s.addInput} />
                   <button type="button" onClick={leggTilKunde} style={s.addBtn} disabled={!nyKunde.trim()}>+ Legg til</button>
                 </div>
@@ -336,9 +327,9 @@ const s: Record<string, React.CSSProperties> = {
   grid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "1rem" },
   label: { display: "flex", flexDirection: "column" as const, gap: "0.25rem", fontSize: "0.85rem", fontWeight: 500, color: "#374151" },
   select: { padding: "0.45rem 0.6rem", border: "1px solid #e2e8f0", borderRadius: 7, fontSize: "0.9rem", background: "white", color: "#1a1a1a" },
-  addRow: { display: "flex", gap: "0.4rem", marginTop: "0.3rem" },
-  addInput: { flex: 1, padding: "0.35rem 0.5rem", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: "0.82rem", minWidth: 0 },
-  addBtn: { padding: "0.35rem 0.65rem", background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 6, cursor: "pointer", fontSize: "0.82rem", whiteSpace: "nowrap" as const },
+  inputRow: { display: "flex", gap: "0.4rem", alignItems: "center" },
+  addInput: { width: 110, padding: "0.45rem 0.5rem", border: "1px solid #e2e8f0", borderRadius: 7, fontSize: "0.82rem", minWidth: 0 },
+  addBtn: { padding: "0.45rem 0.65rem", background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 7, cursor: "pointer", fontSize: "0.82rem", whiteSpace: "nowrap" as const },
   row: { display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" as const },
   numInput: { padding: "0.5rem 0.75rem", border: "1px solid #e2e8f0", borderRadius: 7, fontSize: "1rem", width: 100 },
   btn: { padding: "0.5rem 1.1rem", background: "#1C2233", color: "white", border: "none", borderRadius: 7, cursor: "pointer", fontSize: "0.9rem", fontWeight: 600 },
