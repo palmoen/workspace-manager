@@ -87,6 +87,7 @@ model Asset {
   modell      Modell?        @relation(fields: [modellId], references: [id])
   produkttype Produkttype?   @relation(fields: [produkttypeId], references: [id])
   hendelser   AssetHendelse[]
+  meldinger   AssetMelding[]
 }
 
 model AssetHendelse {
@@ -95,4 +96,22 @@ model AssetHendelse {
   tekst     String
   opprettet DateTime @default(now())
   asset     Asset    @relation(fields: [assetId], references: [id])
+}
+
+enum MeldingType {
+  avvik
+  servicebehov
+  reklamasjon
+}
+
+model AssetMelding {
+  id          String      @id @default(cuid())
+  assetId     String
+  type        MeldingType
+  beskrivelse String
+  innsender   String
+  bilder      String[]
+  opprettet   DateTime    @default(now())
+  behandlet   Boolean     @default(false)
+  asset       Asset       @relation(fields: [assetId], references: [id])
 }

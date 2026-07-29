@@ -38,6 +38,7 @@ export async function GET(req: NextRequest) {
       lokasjon: true,
       modell: { include: { produsent: true } },
       produkttype: true,
+      _count: { select: { meldinger: { where: { behandlet: false } } } },
     },
     orderBy: { opprettet: "desc" },
   });

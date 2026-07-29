@@ -13,6 +13,7 @@ type Asset = {
   garantiMaaneder?: number | null;
   notat?: string | null;
   opprettet: string;
+  _count?: { meldinger?: number } | null;
 };
 
 type FilterOption = { id: string; navn: string };
@@ -46,6 +47,7 @@ const s = {
   link: { color: "#2563eb", textDecoration: "none", fontWeight: 500, fontFamily: "monospace", fontSize: "0.82rem" } as React.CSSProperties,
   notat: { fontSize: "0.8rem", color: "#6b7280", maxWidth: 180, whiteSpace: "nowrap" as const, overflow: "hidden", textOverflow: "ellipsis", display: "block" } as React.CSSProperties,
   empty: { padding: "4rem", textAlign: "center" as const, color: "#9ca3af" } as React.CSSProperties,
+  sakBadge: { display: "inline-block", padding: "0.15rem 0.5rem", borderRadius: 99, fontSize: "0.78rem", fontWeight: 600, background: "#fef3c7", color: "#b45309" } as React.CSSProperties,
 };
 
 export function AssetDashboard() {
@@ -150,6 +152,7 @@ export function AssetDashboard() {
               <th style={s.th}>Kjøpsdato</th>
               <th style={s.th}>Garanti utløper</th>
               <th style={s.th}>Kommentar</th>
+              <th style={s.th}>Saker</th>
               <th style={s.th}></th>
             </tr>
           </thead>
@@ -174,8 +177,13 @@ export function AssetDashboard() {
                   <span style={s.notat} title={a.notat ?? ""}>{a.notat || "–"}</span>
                 </td>
                 <td style={s.td}>
+                  {(a._count?.meldinger ?? 0) > 0 ? (
+                    <span style={s.sakBadge}>{a._count!.meldinger}</span>
+                  ) : "–"}
+                </td>
+                <td style={s.td}>
                   <div style={{ display: "flex", gap: "0.4rem" }}>
-                    <a href={`/asset/${a.id}`} style={s.editBtn}>Rediger</a>
+                    <a href={`/asset/${a.id}?rediger=1`} style={s.editBtn}>Rediger</a>
                     <button style={s.deleteBtn} onClick={() => slettAsset(a.id)}>Slett</button>
                   </div>
                 </td>
