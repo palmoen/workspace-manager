@@ -25,26 +25,27 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const s = {
-  page: { padding: "1.5rem", maxWidth: 1100, margin: "0 auto", fontFamily: "system-ui, sans-serif" } as React.CSSProperties,
-  header: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem", flexWrap: "wrap" as const, gap: "0.75rem" } as React.CSSProperties,
-  h1: { margin: 0, fontSize: "1.4rem" } as React.CSSProperties,
+  page: { padding: "1.5rem", maxWidth: 1140, margin: "0 auto" } as React.CSSProperties,
+  card: { background: "white", borderRadius: 10, boxShadow: "0 1px 4px rgba(0,0,0,0.07)", overflow: "hidden" } as React.CSSProperties,
+  header: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem", flexWrap: "wrap" as const, gap: "0.75rem" } as React.CSSProperties,
+  h1: { margin: 0, fontSize: "1.3rem", fontWeight: 700, color: "#1C2233" } as React.CSSProperties,
   filters: { display: "flex", flexWrap: "wrap" as const, gap: "0.5rem", marginBottom: "1rem", alignItems: "center" } as React.CSSProperties,
-  select: { padding: "0.4rem 0.6rem", border: "1px solid #ccc", borderRadius: 6, fontSize: "0.9rem", background: "white" } as React.CSSProperties,
-  input: { padding: "0.4rem 0.6rem", border: "1px solid #ccc", borderRadius: 6, fontSize: "0.9rem", minWidth: 180 } as React.CSSProperties,
-  exportBtn: { padding: "0.45rem 1rem", background: "#16a34a", color: "white", border: "none", borderRadius: 6, fontSize: "0.9rem", cursor: "pointer" } as React.CSSProperties,
-  table: { width: "100%", borderCollapse: "collapse" as const, fontSize: "0.875rem" } as React.CSSProperties,
-  th: { textAlign: "left" as const, padding: "0.5rem 0.75rem", borderBottom: "2px solid #e5e7eb", background: "#f9fafb", fontWeight: 600 } as React.CSSProperties,
-  td: { padding: "0.5rem 0.75rem", borderBottom: "1px solid #e5e7eb", verticalAlign: "top" as const } as React.CSSProperties,
+  select: { padding: "0.45rem 0.7rem", border: "1px solid #e2e8f0", borderRadius: 7, fontSize: "0.875rem", background: "white", color: "#374151" } as React.CSSProperties,
+  input: { padding: "0.45rem 0.7rem", border: "1px solid #e2e8f0", borderRadius: 7, fontSize: "0.875rem", minWidth: 200, color: "#374151" } as React.CSSProperties,
+  exportBtn: { padding: "0.45rem 1rem", background: "#16a34a", color: "white", border: "none", borderRadius: 7, fontSize: "0.875rem", fontWeight: 600, cursor: "pointer", textDecoration: "none", display: "inline-block" } as React.CSSProperties,
+  table: { width: "100%", borderCollapse: "collapse" as const, fontSize: "0.85rem" } as React.CSSProperties,
+  th: { textAlign: "left" as const, padding: "0.65rem 0.9rem", borderBottom: "1px solid #e2e8f0", background: "#f8fafc", fontWeight: 600, color: "#374151", fontSize: "0.8rem", letterSpacing: "0.03em" } as React.CSSProperties,
+  td: { padding: "0.65rem 0.9rem", borderBottom: "1px solid #f1f5f9", verticalAlign: "middle" as const, color: "#374151" } as React.CSSProperties,
   badge: (status: string): React.CSSProperties => ({
     display: "inline-block", padding: "0.15rem 0.5rem", borderRadius: 12, fontSize: "0.78rem", fontWeight: 500,
     background: status === "registrert" ? "#dcfce7" : status === "kassert" ? "#fee2e2" : status === "trenger_service" ? "#fef9c3" : "#f3f4f6",
     color: status === "registrert" ? "#166534" : status === "kassert" ? "#991b1b" : status === "trenger_service" ? "#854d0e" : "#374151",
   }),
-  deleteBtn: { padding: "0.25rem 0.6rem", background: "none", border: "1px solid #fca5a5", color: "#dc2626", borderRadius: 5, fontSize: "0.8rem", cursor: "pointer" } as React.CSSProperties,
-  editBtn: { padding: "0.25rem 0.6rem", background: "#1d4ed8", color: "white", border: "none", borderRadius: 5, fontSize: "0.8rem", cursor: "pointer", textDecoration: "none", display: "inline-block" } as React.CSSProperties,
-  link: { color: "#1d4ed8", textDecoration: "none", fontWeight: 500 } as React.CSSProperties,
-  notat: { fontSize: "0.8rem", color: "#6b7280", maxWidth: 200, whiteSpace: "nowrap" as const, overflow: "hidden", textOverflow: "ellipsis" } as React.CSSProperties,
-  empty: { padding: "3rem", textAlign: "center" as const, color: "#6b7280" } as React.CSSProperties,
+  deleteBtn: { padding: "0.25rem 0.6rem", background: "none", border: "1px solid #fca5a5", color: "#dc2626", borderRadius: 6, fontSize: "0.78rem", cursor: "pointer" } as React.CSSProperties,
+  editBtn: { padding: "0.25rem 0.65rem", background: "#1C2233", color: "white", border: "none", borderRadius: 6, fontSize: "0.78rem", fontWeight: 500, cursor: "pointer", textDecoration: "none", display: "inline-block" } as React.CSSProperties,
+  link: { color: "#2563eb", textDecoration: "none", fontWeight: 500, fontFamily: "monospace", fontSize: "0.82rem" } as React.CSSProperties,
+  notat: { fontSize: "0.8rem", color: "#6b7280", maxWidth: 180, whiteSpace: "nowrap" as const, overflow: "hidden", textOverflow: "ellipsis", display: "block" } as React.CSSProperties,
+  empty: { padding: "4rem", textAlign: "center" as const, color: "#9ca3af" } as React.CSSProperties,
 };
 
 export function AssetDashboard() {
@@ -130,11 +131,13 @@ export function AssetDashboard() {
         </select>
       </div>
 
+      <div style={s.card}>
       {loading ? (
         <p style={s.empty}>Laster…</p>
       ) : assets.length === 0 ? (
         <p style={s.empty}>Ingen assets funnet</p>
       ) : (
+        <div className="wm-table-wrap">
         <table style={s.table}>
           <thead>
             <tr>
@@ -180,7 +183,9 @@ export function AssetDashboard() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
+      </div>
     </div>
   );
 }
