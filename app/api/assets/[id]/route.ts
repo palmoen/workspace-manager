@@ -73,3 +73,12 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
   return NextResponse.json(asset);
 }
+
+export async function DELETE(_req: NextRequest, { params }: Params) {
+  if (!isAuthenticatedFromRequest(_req)) {
+    return NextResponse.json({ error: "Ikke autentisert" }, { status: 401 });
+  }
+  const { id } = await params;
+  await prisma.asset.update({ where: { id }, data: { slettet: true } });
+  return NextResponse.json({ ok: true });
+}

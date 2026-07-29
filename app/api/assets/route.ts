@@ -3,6 +3,48 @@ import { prisma } from "@/lib/prisma";
 import { generateAssetId } from "@/lib/assetId";
 import { isAuthenticatedFromRequest } from "@/lib/auth";
 
+export async function GET(req: NextRequest) {
+  if (!isAuthenticatedFromRequest(req)) {
+    return NextResponse.json({ error: "Ikke autentisert" }, { status: 401 });
+  }
+  const { searchParams } = new URL(req.url);
+  const status = searchParams.get("status") ?? undefined;
+  const produkttypeId = searchParams.get("produkttypeId") ?? undefined;
+  const kundeId = searchParams.get("kundeId") ?? undefined;
+  const sok = searchParams.get("sok") ?? undefined;
+  const tenantId = process.env.WM_TENANT_ID!;
+
+  const assets = await prisma.asset.findMany({
+    where: {
+      tenantId,
+      slettet: false,
+      ...(status ? { status: status as never } : {}),
+      ...(produkttypeId ? { produkttypeId } : {}),
+      ...(kundeId ? { kundeId } : {}),
+      ...(sok
+        ? {
+            OR: [
+              { id: { contains: sok, mode: "insensitive" } },
+              { notat: { contains: sok, mode: "insensitive" } },
+              { kunde: { navn: { contains: sok, mode: "insensitive" } } },
+              { lokasjon: { navn: { contains: sok, mode: "insensitive" } } },
+              { modell: { navn: { contains: sok, mode: "insensitive" } } },
+            ],
+          }
+        : {}),
+    },
+    include: {
+      kunde: true,
+      lokasjon: true,
+      modell: { include: { produsent: true } },
+      produkttype: true,
+    },
+    orderBy: { opprettet: "desc" },
+  });
+
+  return NextResponse.json(assets);
+}
+
 export async function POST(req: NextRequest) {
   if (!isAuthenticatedFromRequest(req)) {
     return NextResponse.json({ error: "Ikke autentisert" }, { status: 401 });
