@@ -328,7 +328,7 @@ const s: Record<string, React.CSSProperties> = {
   label: { display: "flex", flexDirection: "column" as const, gap: "0.25rem", fontSize: "0.85rem", fontWeight: 500, color: "#374151" },
   select: { padding: "0.45rem 0.6rem", border: "1px solid #e2e8f0", borderRadius: 7, fontSize: "0.9rem", background: "white", color: "#1a1a1a" },
   inputRow: { display: "flex", gap: "0.4rem", alignItems: "center" },
-  addInput: { width: 160, padding: "0.45rem 0.5rem", border: "1px solid #e2e8f0", borderRadius: 7, fontSize: "0.82rem", minWidth: 0 },
+  addInput: { width: 180, padding: "0.45rem 0.5rem", border: "1px solid #e2e8f0", borderRadius: 7, fontSize: "0.82rem", minWidth: 0 },
   addBtn: { padding: "0.45rem 0.65rem", background: "#f1f5f9", border: "1px solid #e2e8f0", borderRadius: 7, cursor: "pointer", fontSize: "0.82rem", whiteSpace: "nowrap" as const },
   row: { display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" as const },
   numInput: { padding: "0.5rem 0.75rem", border: "1px solid #e2e8f0", borderRadius: 7, fontSize: "1rem", width: 100 },
