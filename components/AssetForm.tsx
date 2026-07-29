@@ -419,7 +419,7 @@ export function AssetForm({ assetId, initial, tenantId }: Props) {
 }
 
 const s: Record<string, React.CSSProperties> = {
-  page: { background: "white", borderRadius: 12, boxShadow: "0 1px 6px rgba(0,0,0,0.08)", padding: "1.5rem", display: "flex", flexDirection: "column", gap: "1.25rem" },
+  page: { background: "white", borderRadius: 12, boxShadow: "0 1px 6px rgba(0,0,0,0.08)", padding: "2rem", display: "flex", flexDirection: "column", gap: "1.25rem" },
   topBar: { display: "flex", alignItems: "baseline", gap: "1rem", flexWrap: "wrap", borderBottom: "1px solid #f1f5f9", paddingBottom: "1rem" },
   col: { display: "flex", flexDirection: "column", gap: "1rem" },
   heading: { margin: 0, fontSize: "1.25rem", fontWeight: 700, color: "#1C2233" },

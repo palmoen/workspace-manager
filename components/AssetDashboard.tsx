@@ -25,7 +25,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const s = {
-  page: { padding: "1.5rem", maxWidth: 1140, margin: "0 auto" } as React.CSSProperties,
+  page: { display: "flex", flexDirection: "column", gap: "1rem" } as React.CSSProperties,
   card: { background: "white", borderRadius: 10, boxShadow: "0 1px 4px rgba(0,0,0,0.07)", overflow: "hidden" } as React.CSSProperties,
   header: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem", flexWrap: "wrap" as const, gap: "0.75rem" } as React.CSSProperties,
   h1: { margin: 0, fontSize: "1.3rem", fontWeight: 700, color: "#1C2233" } as React.CSSProperties,

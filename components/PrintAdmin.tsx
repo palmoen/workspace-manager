@@ -221,7 +221,7 @@ export function PrintAdmin() {
 }
 
 const s: Record<string, React.CSSProperties> = {
-  controls: { padding: "1.5rem", maxWidth: 700, fontFamily: "system-ui, sans-serif" },
+  controls: { fontFamily: "system-ui, sans-serif" },
   pageHeading: { margin: "0 0 1.5rem", fontSize: "1.4rem", fontWeight: 700, color: "#1C2233" },
   subheading: { margin: "0 0 0.75rem", fontSize: "1rem", fontWeight: 600, color: "#1C2233" },
   section: { marginBottom: "1.5rem", padding: "1.25rem", background: "white", border: "1px solid #e2e8f0", borderRadius: 10, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" },
