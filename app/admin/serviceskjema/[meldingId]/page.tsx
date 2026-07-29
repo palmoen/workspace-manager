@@ -345,7 +345,13 @@ export default async function ServiceskjemaPage({ params, searchParams }: Props)
             </div>
             <div className="tech-cell full">
               <div className="field-label">Beskrivelse av tiltak</div>
-              <div className="field-line-tall" />
+              {melding.serviceKommentar ? (
+                <div style={{ marginTop: "0.4rem", fontSize: "0.875rem", lineHeight: 1.5, whiteSpace: "pre-wrap" }}>
+                  {melding.serviceKommentar}
+                </div>
+              ) : (
+                <div className="field-line-tall" />
+              )}
             </div>
             <div className="tech-cell full">
               <div className="field-label">Deler / komponenter byttet</div>

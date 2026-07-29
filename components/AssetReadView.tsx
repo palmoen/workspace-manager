@@ -21,6 +21,7 @@ interface Melding {
   bilder: string[];
   opprettet: Date | string;
   behandlet: boolean;
+  serviceKommentar?: string | null;
 }
 
 interface Props {

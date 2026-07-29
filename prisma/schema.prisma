@@ -111,7 +111,8 @@ model AssetMelding {
   beskrivelse String
   innsender   String
   bilder      String[]
-  opprettet   DateTime    @default(now())
-  behandlet   Boolean     @default(false)
-  asset       Asset       @relation(fields: [assetId], references: [id])
+  opprettet        DateTime    @default(now())
+  behandlet        Boolean     @default(false)
+  serviceKommentar String?
+  asset            Asset       @relation(fields: [assetId], references: [id])
 }
