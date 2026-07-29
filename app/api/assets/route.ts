@@ -50,17 +50,37 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Ikke autentisert" }, { status: 401 });
   }
 
-  const { antall, tenantId } = await req.json();
+  const body = await req.json();
+  const { antall, tenantId, modellId, kundeId, kjopsdato, garantiMaaneder } = body;
   const n = Math.max(1, Math.min(500, Number(antall) || 1));
 
   if (!tenantId) {
     return NextResponse.json({ error: "tenantId påkrevd" }, { status: 400 });
   }
 
+  const harForhaandsdata = modellId || kundeId || kjopsdato || garantiMaaneder;
+
+  let produkttypeId: string | null = null;
+  if (modellId) {
+    const modell = await prisma.modell.findUnique({ where: { id: modellId }, select: { produkttypeId: true } });
+    produkttypeId = modell?.produkttypeId ?? null;
+  }
+
   const assets = await prisma.$transaction(
     Array.from({ length: n }, () =>
       prisma.asset.create({
-        data: { id: generateAssetId(), tenantId },
+        data: {
+          id: generateAssetId(),
+          tenantId,
+          ...(harForhaandsdata && {
+            status: "registrert",
+            modellId: modellId ?? null,
+            produkttypeId,
+            kundeId: kundeId ?? null,
+            kjopsdato: kjopsdato ? new Date(kjopsdato) : null,
+            garantiMaaneder: garantiMaaneder ? Number(garantiMaaneder) : null,
+          }),
+        },
       })
     )
   );

@@ -1,61 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AssetLabel } from "@/components/AssetLabel";
 
 const TENANT_ID = process.env.NEXT_PUBLIC_WM_TENANT_ID ?? "";
 
-interface Asset {
-  id: string;
-}
+type Produsent = { id: string; navn: string; modeller: { id: string; navn: string }[] };
+type Kunde = { id: string; navn: string };
 
 export function PrintAdmin() {
-  const [authed, setAuthed] = useState(false);
-  const [pinError, setPinError] = useState("");
-  const [pinLoading, setPinLoading] = useState(false);
-
   const [antall, setAntall] = useState("10");
-  const [genererte, setGenererte] = useState<Asset[]>([]);
-  const [reprints, setReprints] = useState<Asset[]>([]);
+  const [genererte, setGenererte] = useState<{ id: string }[]>([]);
+  const [reprints, setReprints] = useState<{ id: string }[]>([]);
   const [reprIntId, setRePrintId] = useState("");
   const [genLoading, setGenLoading] = useState(false);
   const [reprLoading, setReprLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function loggInn() {
-    const pinVal = (document.getElementById("wm-pin") as HTMLInputElement)?.value ?? "";
-    if (!pinVal) {
-      setPinError("Skriv inn PIN");
-      return;
-    }
-    setPinLoading(true);
-    setPinError("");
-    try {
-      const res = await fetch("/api/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pin: pinVal }),
-      });
-      if (res.ok) {
-        setAuthed(true);
-      } else {
-        setPinError("Feil PIN – prøv igjen");
-        const el = document.getElementById("wm-pin") as HTMLInputElement;
-        if (el) el.value = "";
-      }
-    } finally {
-      setPinLoading(false);
-    }
-  }
+  const [produsenter, setProdusenter] = useState<Produsent[]>([]);
+  const [kunder, setKunder] = useState<Kunde[]>([]);
+  const [produsentId, setProdusentId] = useState("");
+  const [modellId, setModellId] = useState("");
+  const [kundeId, setKundeId] = useState("");
+  const [kjopsdato, setKjopsdato] = useState("");
+  const [garantiMaaneder, setGarantiMaaneder] = useState("");
+
+  useEffect(() => {
+    fetch("/api/produsenter").then((r) => r.json()).then(setProdusenter);
+    fetch("/api/kunder").then((r) => r.json()).then(setKunder);
+  }, []);
+
+  const modeller = produsenter.find((p) => p.id === produsentId)?.modeller ?? [];
 
   async function generer() {
     setGenLoading(true);
     setError("");
     try {
+      const harForhaandsdata = modellId || kundeId || kjopsdato || garantiMaaneder;
       const res = await fetch("/api/assets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ antall: Number(antall), tenantId: TENANT_ID }),
+        body: JSON.stringify({
+          antall: Number(antall),
+          tenantId: TENANT_ID,
+          ...(harForhaandsdata && {
+            modellId: modellId || null,
+            kundeId: kundeId || null,
+            kjopsdato: kjopsdato || null,
+            garantiMaaneder: garantiMaaneder ? Number(garantiMaaneder) : null,
+          }),
+        }),
       });
       if (!res.ok) {
         const d = await res.json();
@@ -89,29 +83,6 @@ export function PrintAdmin() {
     }
   }
 
-  if (!authed) {
-    return (
-      <div style={s.overlay}>
-        <div style={s.card}>
-          <h2 style={s.heading}>Skriv inn PIN</h2>
-          <input
-            id="wm-pin"
-            type="password"
-            inputMode="numeric"
-            defaultValue=""
-            placeholder="PIN"
-            autoFocus
-            style={s.pinInput}
-          />
-          {pinError && <p style={s.pinError}>{pinError}</p>}
-          <button onClick={loggInn} disabled={pinLoading} style={s.loginBtn}>
-            {pinLoading ? "Sjekker…" : "Logg inn"}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   const visningsListe = reprints.length > 0 ? reprints : genererte;
 
   return (
@@ -131,6 +102,60 @@ export function PrintAdmin() {
 
         <section style={s.section}>
           <h2 style={s.subheading}>Generer nye etiketter</h2>
+
+          <div style={s.fieldGroup}>
+            <p style={s.hint}>Valgfritt: forhåndsutfylte felt — assets får status <em>registrert</em>. La stå tomme for rene ubrukt-rader.</p>
+
+            <div style={s.grid}>
+              <label style={s.label}>
+                Produsent
+                <select
+                  value={produsentId}
+                  onChange={(e) => { setProdusentId(e.target.value); setModellId(""); }}
+                  style={s.select}
+                >
+                  <option value="">– velg –</option>
+                  {produsenter.map((p) => <option key={p.id} value={p.id}>{p.navn}</option>)}
+                </select>
+              </label>
+
+              <label style={s.label}>
+                Modell
+                <select
+                  value={modellId}
+                  onChange={(e) => setModellId(e.target.value)}
+                  style={s.select}
+                  disabled={!produsentId}
+                >
+                  <option value="">– velg –</option>
+                  {modeller.map((m) => <option key={m.id} value={m.id}>{m.navn}</option>)}
+                </select>
+              </label>
+
+              <label style={s.label}>
+                Kunde
+                <select value={kundeId} onChange={(e) => setKundeId(e.target.value)} style={s.select}>
+                  <option value="">– velg –</option>
+                  {kunder.map((k) => <option key={k.id} value={k.id}>{k.navn}</option>)}
+                </select>
+              </label>
+
+              <label style={s.label}>
+                Kjøpsdato
+                <input type="date" value={kjopsdato} onChange={(e) => setKjopsdato(e.target.value)} style={s.select} />
+              </label>
+
+              <label style={s.label}>
+                Garantitid
+                <select value={garantiMaaneder} onChange={(e) => setGarantiMaaneder(e.target.value)} style={s.select}>
+                  <option value="">– ikke valgt –</option>
+                  <option value="60">5 år (60 mnd)</option>
+                  <option value="120">10 år (120 mnd)</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
           <div style={s.row}>
             <input
               type="number"
@@ -196,20 +221,19 @@ export function PrintAdmin() {
 }
 
 const s: Record<string, React.CSSProperties> = {
-  overlay: { minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f5f4f0" },
-  card: { background: "white", borderRadius: 8, padding: "2rem", display: "flex", flexDirection: "column", gap: "1rem", width: "min(320px, 90vw)", boxShadow: "0 2px 12px rgba(0,0,0,0.1)" },
-  heading: { margin: 0, fontSize: "1.2rem", fontWeight: 600 },
-  pinInput: { padding: "0.75rem", fontSize: "1.1rem", border: "1px solid #ccc", borderRadius: 6, textAlign: "center" as const, letterSpacing: "0.3em" },
-  pinError: { margin: 0, color: "#c00", fontSize: "0.875rem" },
-  loginBtn: { padding: "0.75rem", background: "#1a1a1a", color: "white", border: "none", borderRadius: 6, fontSize: "1rem", cursor: "pointer" },
-  controls: { padding: "1.5rem", maxWidth: 600, fontFamily: "system-ui, sans-serif" },
-  pageHeading: { margin: "0 0 1.5rem", fontSize: "1.5rem" },
-  subheading: { margin: "0 0 0.75rem", fontSize: "1rem", fontWeight: 600 },
-  section: { marginBottom: "1.5rem", padding: "1rem", border: "1px solid #e0e0e0", borderRadius: 8 },
-  row: { display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" },
-  numInput: { padding: "0.5rem 0.75rem", border: "1px solid #ccc", borderRadius: 6, fontSize: "1rem", width: 120 },
-  btn: { padding: "0.5rem 1rem", background: "#1a1a1a", color: "white", border: "none", borderRadius: 6, cursor: "pointer", fontSize: "0.9rem" },
-  printBtn: { padding: "0.5rem 1rem", background: "#2a6", color: "white", border: "none", borderRadius: 6, cursor: "pointer", fontSize: "0.9rem" },
-  error: { color: "#c00", fontSize: "0.875rem" },
-  info: { color: "#555", fontSize: "0.875rem" },
+  controls: { padding: "1.5rem", maxWidth: 700, fontFamily: "system-ui, sans-serif" },
+  pageHeading: { margin: "0 0 1.5rem", fontSize: "1.4rem", fontWeight: 700, color: "#1C2233" },
+  subheading: { margin: "0 0 0.75rem", fontSize: "1rem", fontWeight: 600, color: "#1C2233" },
+  section: { marginBottom: "1.5rem", padding: "1.25rem", background: "white", border: "1px solid #e2e8f0", borderRadius: 10, boxShadow: "0 1px 3px rgba(0,0,0,0.05)" },
+  fieldGroup: { marginBottom: "1rem" },
+  hint: { fontSize: "0.8rem", color: "#6b7280", marginBottom: "0.75rem" },
+  grid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "1rem" },
+  label: { display: "flex", flexDirection: "column" as const, gap: "0.25rem", fontSize: "0.85rem", fontWeight: 500, color: "#374151" },
+  select: { padding: "0.45rem 0.6rem", border: "1px solid #e2e8f0", borderRadius: 7, fontSize: "0.9rem", background: "white", color: "#1a1a1a" },
+  row: { display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" as const },
+  numInput: { padding: "0.5rem 0.75rem", border: "1px solid #e2e8f0", borderRadius: 7, fontSize: "1rem", width: 100 },
+  btn: { padding: "0.5rem 1.1rem", background: "#1C2233", color: "white", border: "none", borderRadius: 7, cursor: "pointer", fontSize: "0.9rem", fontWeight: 600 },
+  printBtn: { padding: "0.5rem 1.1rem", background: "#16a34a", color: "white", border: "none", borderRadius: 7, cursor: "pointer", fontSize: "0.9rem", fontWeight: 600 },
+  error: { color: "#dc2626", fontSize: "0.875rem" },
+  info: { color: "#6b7280", fontSize: "0.875rem", marginTop: "0.5rem" },
 };
