@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Tenant {
+  id      String  @id @default(cuid())
+  navn    String
+  logoUrl String?
+  kunder  Kunde[]
+  assets  Asset[]
+}
+
+model Kunde {
+  id         String     @id @default(cuid())
+  tenantId   String
+  navn       String
+  tenant     Tenant     @relation(fields: [tenantId], references: [id])
+  lokasjoner Lokasjon[]
+  assets     Asset[]
+}
+
+model Lokasjon {
+  id      String  @id @default(cuid())
+  kundeId String
+  navn    String
+  kunde   Kunde   @relation(fields: [kundeId], references: [id])
+  assets  Asset[]
+}
+
+model Produkttype {
+  id       String   @id @default(cuid())
+  navn     String   @unique
+  modeller Modell[]
+  assets   Asset[]
+}
+
+model Produsent {
+  id       String   @id @default(cuid())
+  navn     String   @unique
+  modeller Modell[]
+}
+
+model Modell {
+  id            String       @id @default(cuid())
+  produsentId   String
+  produkttypeId String?
+  navn          String
+  produsent     Produsent    @relation(fields: [produsentId], references: [id])
+  produkttype   Produkttype? @relation(fields: [produkttypeId], references: [id])
+  assets        Asset[]
+
+  @@unique([produsentId, navn])
+}
+
+enum AssetStatus {
+  ubrukt
+  registrert
+  trenger_service
+  kassert
+}
+
+model Asset {
+  id              String      @id
+  status          AssetStatus @default(ubrukt)
+  tenantId        String
+  kundeId         String?
+  lokasjonId      String?
+  modellId        String?
+  produkttypeId   String?
+  kjopsdato       DateTime?
+  garantiMaaneder Int?
+  notat           String?
+  bilder          String[]
+  opprettet       DateTime    @default(now())
+  sistEndret      DateTime    @updatedAt
+
+  tenant      Tenant         @relation(fields: [tenantId], references: [id])
+  kunde       Kunde?         @relation(fields: [kundeId], references: [id])
+  lokasjon    Lokasjon?      @relation(fields: [lokasjonId], references: [id])
+  modell      Modell?        @relation(fields: [modellId], references: [id])
+  produkttype Produkttype?   @relation(fields: [produkttypeId], references: [id])
+  hendelser   AssetHendelse[]
+}
+
+model AssetHendelse {
+  id        String   @id @default(cuid())
+  assetId   String
+  tekst     String
+  opprettet DateTime @default(now())
+  asset     Asset    @relation(fields: [assetId], references: [id])
+}
