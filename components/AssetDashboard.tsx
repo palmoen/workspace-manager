@@ -41,7 +41,9 @@ const s = {
     color: status === "registrert" ? "#166534" : status === "kassert" ? "#991b1b" : status === "trenger_service" ? "#854d0e" : "#374151",
   }),
   deleteBtn: { padding: "0.25rem 0.6rem", background: "none", border: "1px solid #fca5a5", color: "#dc2626", borderRadius: 5, fontSize: "0.8rem", cursor: "pointer" } as React.CSSProperties,
+  editBtn: { padding: "0.25rem 0.6rem", background: "#1d4ed8", color: "white", border: "none", borderRadius: 5, fontSize: "0.8rem", cursor: "pointer", textDecoration: "none", display: "inline-block" } as React.CSSProperties,
   link: { color: "#1d4ed8", textDecoration: "none", fontWeight: 500 } as React.CSSProperties,
+  notat: { fontSize: "0.8rem", color: "#6b7280", maxWidth: 200, whiteSpace: "nowrap" as const, overflow: "hidden", textOverflow: "ellipsis" } as React.CSSProperties,
   empty: { padding: "3rem", textAlign: "center" as const, color: "#6b7280" } as React.CSSProperties,
 };
 
@@ -144,6 +146,7 @@ export function AssetDashboard() {
               <th style={s.th}>Lokasjon</th>
               <th style={s.th}>Kjøpsdato</th>
               <th style={s.th}>Garanti utløper</th>
+              <th style={s.th}>Kommentar</th>
               <th style={s.th}></th>
             </tr>
           </thead>
@@ -165,7 +168,13 @@ export function AssetDashboard() {
                 <td style={s.td}>{formaterDato(a.kjopsdato)}</td>
                 <td style={s.td}>{garantiSlutt(a)}</td>
                 <td style={s.td}>
-                  <button style={s.deleteBtn} onClick={() => slettAsset(a.id)}>Slett</button>
+                  <span style={s.notat} title={a.notat ?? ""}>{a.notat || "–"}</span>
+                </td>
+                <td style={s.td}>
+                  <div style={{ display: "flex", gap: "0.4rem" }}>
+                    <a href={`/asset/${a.id}`} style={s.editBtn}>Rediger</a>
+                    <button style={s.deleteBtn} onClick={() => slettAsset(a.id)}>Slett</button>
+                  </div>
                 </td>
               </tr>
             ))}
