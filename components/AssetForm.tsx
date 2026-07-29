@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { resizeImage } from "@/lib/resizeImage";
 
 interface Produkttype {
   id: string;
@@ -192,8 +193,9 @@ export function AssetForm({ assetId, initial, tenantId }: Props) {
     if (!file) return;
     setUploading(true);
     try {
+      const resized = await resizeImage(file);
       const form = new FormData();
-      form.append("file", file);
+      form.append("file", resized);
       const res = await fetch("/api/upload", { method: "POST", body: form });
       if (res.ok) {
         const { url } = await res.json();

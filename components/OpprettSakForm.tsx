@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { resizeImage } from "@/lib/resizeImage";
 
 type Props = { assetId: string };
 
@@ -61,13 +62,14 @@ export function OpprettSakForm({ assetId }: Props) {
 
     setSending(true);
     try {
+      const resized = await resizeImage(bilde);
       const form = new FormData();
       form.append("type", type);
       form.append("beskrivelse", beskrivelse.trim());
       form.append("navn", navn.trim());
       form.append("epost", epost.trim());
       form.append("telefon", telefon.trim());
-      form.append("bilde", bilde);
+      form.append("bilde", resized);
 
       const res = await fetch(`/api/assets/${encodeURIComponent(assetId)}/meldinger`, {
         method: "POST",
