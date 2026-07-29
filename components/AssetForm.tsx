@@ -66,7 +66,7 @@ export function AssetForm({ assetId, initial, tenantId }: Props) {
   const [produkttypeId, setProduktypeId] = useState(initial?.produkttypeId ?? initial?.modell?.produkttype?.id ?? "");
   const [produsentId, setProdusentId] = useState(initial?.modell?.produsent.id ?? "");
   const [modellId, setModellId] = useState(initial?.modellId ?? "");
-  const [kjopsdato, setKjopsdato] = useState(initial?.kjopsdato ? initial.kjopsdato.slice(0, 10) : "");
+  const [kjopsdato, setKjopsdato] = useState(initial?.kjopsdato ? new Date(initial.kjopsdato).toISOString().slice(0, 10) : "");
   const [garantiMaaneder, setGarantiMaaneder] = useState(initial?.garantiMaaneder?.toString() ?? "");
   const [kundeNavn, setKundeNavn] = useState(initial?.kunde?.navn ?? "");
   const [lokasjonNavn, setLokasjonNavn] = useState(initial?.lokasjon?.navn ?? "");
