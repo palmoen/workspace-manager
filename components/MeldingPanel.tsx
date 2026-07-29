@@ -70,13 +70,21 @@ export function MeldingPanel({ melding }: { melding: Melding }) {
         </div>
       )}
 
-      {!behandlet && (
-        <div style={s.footer}>
+      <div style={s.footer}>
+        <a
+          href={`/admin/serviceskjema/${melding.id}`}
+          target="_blank"
+          rel="noreferrer"
+          style={s.printBtn}
+        >
+          Skriv ut serviceskjema
+        </a>
+        {!behandlet && (
           <button onClick={markerBehandlet} disabled={loading} style={s.behandletBtn}>
             {loading ? "Lagrer…" : "Merk som behandlet"}
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
@@ -92,6 +100,7 @@ const s: Record<string, React.CSSProperties> = {
   meta: { fontSize: "0.78rem", color: "#6b7280" },
   bilder: { display: "flex", gap: "0.4rem", flexWrap: "wrap" },
   thumb: { width: 64, height: 64, objectFit: "cover", borderRadius: 5, border: "1px solid #e2e8f0" },
-  footer: { paddingTop: "0.25rem" },
+  footer: { paddingTop: "0.25rem", display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" as const },
+  printBtn: { padding: "0.35rem 0.75rem", background: "none", border: "1px solid #d1d5db", borderRadius: 6, cursor: "pointer", fontSize: "0.8rem", color: "#374151", textDecoration: "none", display: "inline-block" },
   behandletBtn: { padding: "0.35rem 0.75rem", background: "#16a34a", color: "white", border: "none", borderRadius: 6, cursor: "pointer", fontSize: "0.8rem", fontWeight: 600 },
 };
