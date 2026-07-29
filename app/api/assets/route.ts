@@ -52,16 +52,16 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
   const { antall, tenantId, modellId, kundeId, kjopsdato, garantiMaaneder } = body;
+  let { produkttypeId } = body as { produkttypeId?: string | null };
   const n = Math.max(1, Math.min(500, Number(antall) || 1));
 
   if (!tenantId) {
     return NextResponse.json({ error: "tenantId påkrevd" }, { status: 400 });
   }
 
-  const harForhaandsdata = modellId || kundeId || kjopsdato || garantiMaaneder;
+  const harForhaandsdata = produkttypeId || modellId || kundeId || kjopsdato || garantiMaaneder;
 
-  let produkttypeId: string | null = null;
-  if (modellId) {
+  if (!produkttypeId && modellId) {
     const modell = await prisma.modell.findUnique({ where: { id: modellId }, select: { produkttypeId: true } });
     produkttypeId = modell?.produkttypeId ?? null;
   }

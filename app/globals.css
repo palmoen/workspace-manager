@@ -43,7 +43,7 @@ a { color: inherit; text-decoration: none; }
 
 /* Shared page container — brukes i header og main på alle sider */
 .wm-container {
-  max-width: 1200px;
+  max-width: 1440px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 2rem;

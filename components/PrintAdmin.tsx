@@ -5,6 +5,7 @@ import { AssetLabel } from "@/components/AssetLabel";
 
 const TENANT_ID = process.env.NEXT_PUBLIC_WM_TENANT_ID ?? "";
 
+type Produkttype = { id: string; navn: string };
 type Produsent = { id: string; navn: string; modeller: { id: string; navn: string }[] };
 type Kunde = { id: string; navn: string };
 
@@ -17,24 +18,49 @@ export function PrintAdmin() {
   const [reprLoading, setReprLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [produkttyper, setProdukttyper] = useState<Produkttype[]>([]);
   const [produsenter, setProdusenter] = useState<Produsent[]>([]);
   const [kunder, setKunder] = useState<Kunde[]>([]);
+  const [produkttypeId, setProduktypeId] = useState("");
   const [produsentId, setProdusentId] = useState("");
   const [modellId, setModellId] = useState("");
   const [kundeId, setKundeId] = useState("");
   const [kjopsdato, setKjopsdato] = useState("");
   const [garantiMaaneder, setGarantiMaaneder] = useState("");
 
+  const [nyType, setNyType] = useState("");
   const [nyProdusent, setNyProdusent] = useState("");
   const [nyModell, setNyModell] = useState("");
   const [nyKunde, setNyKunde] = useState("");
 
   useEffect(() => {
-    fetch("/api/produsenter").then((r) => r.json()).then(setProdusenter);
+    fetch("/api/produkttyper").then((r) => r.json()).then(setProdukttyper);
     fetch("/api/kunder").then((r) => r.json()).then(setKunder);
   }, []);
 
+  useEffect(() => {
+    const url = produkttypeId ? `/api/produsenter?produkttypeId=${produkttypeId}` : "/api/produsenter";
+    fetch(url).then((r) => r.json()).then(setProdusenter);
+    setProdusentId("");
+    setModellId("");
+  }, [produkttypeId]);
+
   const modeller = produsenter.find((p) => p.id === produsentId)?.modeller ?? [];
+
+  async function leggTilType() {
+    if (!nyType.trim()) return;
+    const res = await fetch("/api/produkttyper", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ navn: nyType.trim() }),
+    });
+    if (res.ok) {
+      const t: Produkttype = await res.json();
+      setProdukttyper((prev) => [...prev.filter((x) => x.id !== t.id), t].sort((a, b) => a.navn.localeCompare(b.navn)));
+      setProduktypeId(t.id);
+      setNyType("");
+    }
+  }
 
   async function leggTilProdusent() {
     if (!nyProdusent.trim()) return;
@@ -91,7 +117,7 @@ export function PrintAdmin() {
     setGenLoading(true);
     setError("");
     try {
-      const harForhaandsdata = modellId || kundeId || kjopsdato || garantiMaaneder;
+      const harForhaandsdata = produkttypeId || modellId || kundeId || kjopsdato || garantiMaaneder;
       const res = await fetch("/api/assets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -99,6 +125,7 @@ export function PrintAdmin() {
           antall: Number(antall),
           tenantId: TENANT_ID,
           ...(harForhaandsdata && {
+            produkttypeId: produkttypeId || null,
             modellId: modellId || null,
             kundeId: kundeId || null,
             kjopsdato: kjopsdato || null,
@@ -162,6 +189,18 @@ export function PrintAdmin() {
             <p style={s.hint}>Valgfritt: forhåndsutfylte felt — assets får status <em>registrert</em>. La stå tomme for rene ubrukt-rader.</p>
 
             <div style={s.grid}>
+              <div style={s.label}>
+                Produkttype
+                <select value={produkttypeId} onChange={(e) => setProduktypeId(e.target.value)} style={s.select}>
+                  <option value="">– velg type –</option>
+                  {produkttyper.map((t) => <option key={t.id} value={t.id}>{t.navn}</option>)}
+                </select>
+                <div style={s.addRow}>
+                  <input value={nyType} onChange={(e) => setNyType(e.target.value)} placeholder="Ny type…" style={s.addInput} />
+                  <button type="button" onClick={leggTilType} style={s.addBtn} disabled={!nyType.trim()}>+ Legg til</button>
+                </div>
+              </div>
+
               <div style={s.label}>
                 Produsent
                 <select
